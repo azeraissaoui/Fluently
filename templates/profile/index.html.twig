@@ -1,0 +1,192 @@
+{# templates/profile/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Fluently{% endblock %}
+
+{% block body %}
+
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 0; margin: 0;">
+
+    {# Header avec logo + pseudo (comme dans tes captures) #}
+    <div style="padding: 20px 0; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.12);">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            
+            <div style="margin-top: 8px; color: white; font-size: 1.1rem; font-weight: 500; opacity: 0.9;">
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+
+    {# Contenu principal #}
+    <div class="container py-5" style="padding-top: 40px !important;">
+        <div class="row">
+
+            {# Colonne de gauche - profil + menu #}
+            <div class="col-md-4 col-lg-3">
+
+                <div class="card shadow mb-4" style="background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border: none; border-radius: 12px;">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="feather-user" style="font-size: 60px; color: #007bff;"></i>
+                        </div>
+                        <h4>{{ user.nom }} {{ user.prenom }}</h4>
+                        <p class="text-muted">{{ user.email }}</p>
+                        <div class="badge bg-info mb-3">{{ user.role|capitalize }}</div>
+                        
+                        <div class="mt-4">
+                            <h6 class="text-muted">Statut du compte</h6>
+                            {% if user.statut == 'online' %}
+                                <span class="badge bg-success">En ligne</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Hors ligne</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow" style="background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border: none; border-radius: 12px;">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">Menu rapide</h6>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('app_home') }}" class="list-group-item list-group-item-action">
+                            <i class="feather-home me-2"></i>Accueil
+                        </a>
+                        <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action active">
+                            <i class="feather-user me-2"></i>Mon profil
+                        </a>
+                        <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action text-danger">
+                            <i class="feather-log-out me-2"></i>Déconnexion
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            {# Colonne de droite - formulaire + activités #}
+            <div class="col-md-8 col-lg-9">
+
+                {# Messages flash #}
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show mb-4">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show mb-4">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+
+                {# Formulaire principal #}
+                <div class="card shadow mb-4" style="background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border: none; border-radius: 12px;">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="feather-edit-2 me-2"></i>Modifier mon profil</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" novalidate>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control {% if app.session.get('error_nom') %}is-invalid{% endif %}" id="nom" name="nom" value="{{ app.request.request.get('nom', user.nom) }}" required>
+                                    <div class="form-text">Votre nom de famille (sans chiffres)</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control {% if app.session.get('error_prenom') %}is-invalid{% endif %}" id="prenom" name="prenom" value="{{ app.request.request.get('prenom', user.prenom) }}" required>
+                                    <div class="form-text">Utilisé comme nom d'utilisateur</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control {% if app.session.get('error_email') %}is-invalid{% endif %}" id="email" name="email" value="{{ app.request.request.get('email', user.email) }}" required>
+                                    <div class="form-text">Adresse email valide</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="role" class="form-label">Rôle <span class="text-danger">*</span></label>
+                                    <select class="form-control {% if app.session.get('error_role') %}is-invalid{% endif %}" id="role" name="role" required>
+                                        <option value="" disabled>Choisissez un rôle</option>
+                                        <option value="user" {% if user.role == 'user' %}selected{% endif %}>Utilisateur</option>
+                                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
+                                        <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>Enseignant</option>
+                                        <option value="student" {% if user.role == 'student' %}selected{% endif %}>Étudiant</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="mb-3"><i class="feather-lock me-2"></i>Changer le mot de passe</h5>
+                            <p class="text-muted small">Laissez les champs vides pour conserver votre mot de passe actuel.</p>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">Nouveau mot de passe</label>
+                                    <input type="password" class="form-control {% if app.session.get('error_password') %}is-invalid{% endif %}" id="password" name="password" placeholder="Minimum 6 caractères">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+                                    <input type="password" class="form-control {% if app.session.get('error_confirm_password') %}is-invalid{% endif %}" id="confirm_password" name="confirm_password" placeholder="Identique au mot de passe">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                                    <i class="feather-arrow-left me-2"></i>Retour à l'accueil
+                                </a>
+                                <div>
+                                    <button type="reset" class="btn btn-secondary me-2">Réinitialiser</button>
+                                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {# Dernières activités #}
+                <div class="card shadow" style="background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border: none; border-radius: 12px;">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="feather-activity me-2"></i>Dernières activités</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <small>Connexion réussie</small>
+                                    <small class="text-muted">Aujourd'hui, 10:30</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <small>Profil mis à jour</small>
+                                    <small class="text-muted">Hier, 14:20</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <small>Mot de passe changé</small>
+                                    <small class="text-muted">3 jours</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modifier Utilisateur - Fluently</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/images/favicon.ico') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/css/vendors.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme.min.css') }}" />
+    
+    <style>
+        .nxl-navigation {
+            width: 280px !important;
+        }
+        
+        .nxl-navigation .navbar-wrapper {
+            width: 280px !important;
+        }
+        
+        .nxl-container {
+            margin-left: 280px !important;
+        }
+        
+        .nxl-header {
+            left: 280px !important;
+        }
+        
+        .m-header .logo-lg {
+            max-width: 120px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nxl-navigation">
+        <div class="navbar-wrapper">
+            <div class="m-header">
+                <a href="{{ path('app_home') }}" class="b-brand">
+                    <img src="{{ asset('assets/images/fluently.png') }}" alt="Fluently" class="logo logo-lg" />
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="nxl-header">
+        <div class="header-wrapper">
+            <div class="header-right ms-auto">
+                <div class="d-flex align-items-center">
+                    <a href="{{ path('dashboard') }}" class="btn btn-sm btn-light-brand">
+                        <i class="feather-arrow-left me-2"></i>Retour au Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="nxl-container">
+        <div class="nxl-content">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">Modifier l'utilisateur</h4>
+                            </div>
+                            <div class="card-body">
+                                {% for message in app.flashes('success') %}
+                                    <div class="alert alert-success alert-dismissible fade show">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                                
+                                {% for message in app.flashes('error') %}
+                                    <div class="alert alert-danger alert-dismissible fade show">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                                
+                                <form method="post">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="nom" name="nom" value="{{ user.nom }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="prenom" name="prenom" value="{{ user.prenom }}" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="role" class="form-label">Rôle <span class="text-danger">*</span></label>
+                                            <select class="form-control" id="role" name="role" required>
+                                                <option value="user" {% if user.role == 'user' %}selected{% endif %}>Utilisateur</option>
+                                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
+                                                <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>Enseignant</option>
+                                                <option value="student" {% if user.role == 'student' %}selected{% endif %}>Étudiant</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="statut" class="form-label">Statut</label>
+                                            <select class="form-control" id="statut" name="statut">
+                                                <option value="online" {% if user.statut == 'online' %}selected{% endif %}>En ligne</option>
+                                                <option value="offline" {% if user.statut == 'offline' %}selected{% endif %}>Hors ligne</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr class="my-4">
+                                    
+                                    <h5 class="mb-3">Changer le mot de passe (optionnel)</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="password" class="form-label">Nouveau mot de passe</label>
+                                            <input type="password" class="form-control" id="password" name="password" placeholder="Laisser vide pour ne pas changer">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+                                            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ path('dashboard') }}" class="btn btn-secondary">
+                                            <i class="feather-arrow-left me-2"></i>Annuler
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="feather-save me-2"></i>Enregistrer les modifications
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ asset('assets/vendors/js/vendors.min.js') }}"></script>
+    <script src="{{ asset('assets/js/common-init.min.js') }}"></script>
+</body>
+
+</html>

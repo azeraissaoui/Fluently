@@ -85,25 +85,42 @@
                     <li class="nav-item {{ app.request.get('_route') == 'app_objectif' ? 'active' : '' }}">
                         <a href="{{ path('app_objectif') }}" class="nav-link">Objectifs</a></li>
                 {# Boutons utilisateur #}
-                    <li class="nav-item dropdown ml-lg-3">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user-circle mr-2" style="font-size: 1.2rem;"></i>
-                            <span>Mon compte</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                            {# Bouton Profil #}
-                            <a class="dropdown-item" href="#">
-                                {# <a class="dropdown-item" href="{{ path('app_profile') }}"> #}
-                                <i class="fa fa-user mr-2"></i> Mon profil
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            {# Bouton Déconnexion #}
-                            <a class="dropdown-item text-danger" href="#">
-                                {# <a class="dropdown-item text-danger" href="{{ path('app_logout') }}"> #}
-                                <i class="fa fa-sign-out mr-2"></i> Déconnexion
-                            </a>
-                        </div>
-                    </li>
+{# Boutons utilisateur #}
+<li class="nav-item dropdown ml-lg-3">
+    {% if app.session.get('user_id') %}
+        <a class="nav-link dropdown-toggle d-flex align-items-center"
+           href="#"
+           id="userDropdown"
+           role="button"
+           data-toggle="dropdown">
+
+            <i class="fa fa-user-circle mr-2" style="font-size:1.2rem;"></i>
+            <span>{{ app.session.get('user_name') }} ({{ app.session.get('user_status') }})</span>
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{{ path('app_profile') }}">
+    <i class="fa fa-user mr-2"></i> Mon profil
+</a>
+
+
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item text-danger" href="#" onclick="logoutUser(event)">
+                <i class="fa fa-sign-out mr-2"></i> Déconnexion
+            </a>
+        </div>
+
+    {% else %}
+        <a class="nav-link d-flex align-items-center" href="{{ path('app_login') }}">
+            <i class="fa fa-user-circle mr-2" style="font-size:1.2rem;"></i>
+            <span>Se connecter</span>
+        </a>
+    {% endif %}
+</li>
+
+
+
                     
                     {# Version alternative avec boutons séparés (sans dropdown) #}
                     {#
@@ -177,5 +194,22 @@
     <script src="{{ asset('assets/js/google-map.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     {% endblock %}
+    {% block javascripts %}
+   <script>
+function logoutUser(event) {
+    event.preventDefault();
+
+    fetch('/logout-ajax')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();   // refresh navbar state
+            }
+        });
+}
+
+</script>
+{% endblock %}
+
 </body>
 </html>

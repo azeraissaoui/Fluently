@@ -22,11 +22,15 @@ class User
     #[ORM\Column(length: 50)]
     private ?string $prenom = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
     #[ORM\Column(length: 100)]
     private ?string $role = null;
 
     #[ORM\Column(length: 100)]
     private ?string $statut = null;
+
 
     public function getId(): ?int
     {
@@ -92,4 +96,7 @@ class User
 
         return $this;
     }
+     
+    public function getPassword(): ?string { return $this->password; }
+    public function setPassword(string $password): static { $this->password = $password; return $this; }
 }
